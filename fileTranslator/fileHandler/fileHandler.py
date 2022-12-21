@@ -1,5 +1,6 @@
 import os
 import json
+import threading
 
 from translation.translation import translateLanguage
 
@@ -28,7 +29,10 @@ def createAllFiles(toTranslate: str):
         pass
     os.chdir('result')
     src = toTranslate[-7: -5]
-    print(src)
+    print('Langue source: ' + src +
+          '\nListe des langues dans lesquelles le fichier va être traduit:\n')
+    treadList = []
+    fileList = []
     for folder in languages:
         try:
             os.mkdir(folder)
@@ -36,6 +40,10 @@ def createAllFiles(toTranslate: str):
             pass
         os.chdir(folder)
         file = open(folder + '.json', 'w', encoding='utf-8')
-        translateLanguage(srcJSON, src, folder, file)
-        file.close()
+        fileList.append(file)
+        treadList.append(threading.Thread(
+            target=translateLanguage, args=(srcJSON, src, folder, file)))
         os.chdir('..')
+
+    for thread in treadList:
+        thread.start()
