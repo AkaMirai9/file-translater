@@ -1,6 +1,8 @@
+from io import TextIOWrapper
 import os
 import json
 import threading
+import re
 
 from translation.translation import translateLanguage
 
@@ -18,11 +20,25 @@ def getLanguages():
     languagesFile.close()
     return languages
 
+def JSONToDict(myJSONFile: TextIOWrapper):
+    newDict = dict()
+    line = myJSONFile.readline()
+    while line != '':
+        line = myJSONFile.readline()
+        print('line:' + line )
+        if str(type(re.search(r"{\n|}\n|}|^$", line))) != "<class 'NoneType'>":
+            continue
+        matches = re.search(r"^  \"(?P<key>[a-zA-Z0-9._-]+)\": ?\"(?P<value>.*)\"(,$|$)", line)
+        print('matches:')
+        print(matches)
+        newDict[matches['key']] = matches['value']
+    return newDict
+
 
 def createAllFiles(toTranslate: str):
     languages = getLanguages()
     srcFile = open(toTranslate, 'r')
-    srcJSON = json.load(srcFile)
+    srcJSON = JSONToDict(srcFile)
     try:
         os.mkdir('result')
     except FileExistsError:
