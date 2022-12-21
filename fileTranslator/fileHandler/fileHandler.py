@@ -39,7 +39,7 @@ def createAllFiles(toTranslate: str):
         except FileExistsError:
             pass
         os.chdir(folder)
-        file = open(folder + '.json', 'w', encoding='utf-8')
+        file = open('translation.json', 'w', encoding='utf-8')
         fileList.append(file)
         treadList.append(threading.Thread(
             target=translateLanguage, args=(srcJSON, src, folder, file)))
