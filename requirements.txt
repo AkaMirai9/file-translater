@@ -1,1 +1,3 @@
-translators
+googletrans
+google_trans_new
+deepl
